@@ -1,5 +1,7 @@
 # React Solid
+
 Author: Cameron Heilman, Adrian Rodriguez
+
 This project is for Computer Networks
 ------------------
 

@@ -1,6 +1,6 @@
 # React Solid
-##Author: Cameron Heilman, Adrian Rodriguez
-###This project is for Computer Networks
+Author: Cameron Heilman, Adrian Rodriguez
+This project is for Computer Networks
 ------------------
 
 ###Objective

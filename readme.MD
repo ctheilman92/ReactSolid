@@ -9,4 +9,5 @@ This project is for Computer Networks
 To explore ethereum block chain development of DApps.
 
 :=> This project uses lite server/React JS for web interface. 
+
 :=> Truffle/Web3 for blockchain api & compiler for solidity smart contracts

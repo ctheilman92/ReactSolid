@@ -5,7 +5,7 @@ Author: Cameron Heilman, Adrian Rodriguez
 This project is for Computer Networks
 ------------------
 
-###Objective
+Objective
 To explore ethereum block chain development of DApps.
 
 :=> This project uses lite server/React JS for web interface. 

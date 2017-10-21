@@ -22,17 +22,6 @@ class ButtonSave extends Component {
 
 
 class AccountsList extends Component {
-  //THIS DOESN'T WORK
-  // accList = this.props.accounts.map((item, i) => {
-  //   return <li key={i}>{item}</li>
-  // });
-
-  //BUT THIS WORKS --- WHY DOH
-  // accList = ['0x235168235012310xdcavxdga', '0x23dAasdf923bdsfhkaj'].map((item, i) => {
-  //   return <li key={i}>{item}</li>
-  // })
-  
-
   render() {
     return (
       <div>
@@ -49,15 +38,6 @@ class AccountsList extends Component {
   }
 }
 
-class TableTop extends Component {
-  render() {
-    return (
-      <div>
-
-      </div>
-    )
-  }
-}
 
 
 class App extends Component {
@@ -76,17 +56,11 @@ class App extends Component {
   componentWillMount() {
     // Get network provider and web3 instance.
     // See utils/getWeb3 for more info.
-
     getWeb3
     .then(results => {
-      this.setState({
-        web3: results.web3
-      })
-
-      // Instantiate contract once web3 provided.
-      this.instantiateContract()
-    })
-    .catch(() => {
+      this.setState({web3: results.web3})
+      this.instantiateContract()  //instantiate contract
+    }).catch(() => {
       console.log('Error finding web3.')
     })
 
@@ -96,20 +70,17 @@ class App extends Component {
     const contract = require('truffle-contract')
     const simpleStorage = contract(SimpleStorageContract)
     simpleStorage.setProvider(this.state.web3.currentProvider)
-
-    // Declaring this for later so we can chain functions on SimpleStorage.
-    var simpleStorageInstance
+    var simpleStorageInstance // Declaring this for later so we can chain functions on SimpleStorage.
 
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
       this.setState({accountsList: accounts})
+
       simpleStorage.deployed().then((instance) => {
         simpleStorageInstance = instance
 
-
-        return simpleStorageInstance.getString.call(accounts[0])
-      }).then((result) => {
-        return this.setState({ storageString: result })
+        return simpleStorageInstance.getString.call(accounts[0])}).then((result) => {
+          return this.setState({ storageString: result })
       })
     })
   }

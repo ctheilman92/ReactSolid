@@ -101,7 +101,8 @@ class App extends Component {
         }).then((res) => {
           return SSInstance.getString.call(accounts[0])
         }).then((res) => {
-          return this.setState({storageString: res})
+          this.setState({storageString: res})
+          this.forceUpdate();
         })
       })
     })

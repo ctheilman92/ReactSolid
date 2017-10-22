@@ -2,10 +2,48 @@ import React, { Component } from 'react'
 import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
 import getWeb3 from './utils/getWeb3'
 
+import './css/styles.css'
 import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
+
+
+//region inline-styles
+var btnStyle = {
+  margin: '7px',
+  borderRadius: '5px'
+}
+
+var navLink = {
+  float: 'right',
+  width: '50px'
+}
+
+//endregion
+class TodoList extends Component {
+  
+  render() {
+    return (
+      <table className="pure-table pure-table-horizontal">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Account</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            {this.props.accounts.map((item, i) => {
+              return <td key={i}>{item}</td>
+            })}
+          </tr>
+        </tbody>
+      </table>
+    )
+  }
+}
 
 
 class ButtonSave extends Component {
@@ -15,29 +53,31 @@ class ButtonSave extends Component {
 
   render() {
     return (
-      <button onClick={this.handleClick}>Save</button>
+      <button onClick={this.handleClick} type="submit" style={btnStyle} 
+      className="pure-button pure-button-primary btnStyle">Save</button>
     )
   }
 }
 
+class FormStringSave extends Component {
+  handleClick = () => {
+    this.props.saveStringRef(this.props.pl)
+  }
 
-class AccountsList extends Component {
   render() {
     return (
-      <div>
-        <h3>List of Accounts: </h3>
-        <ul>
-          {/* {this.accList} */}
-          {this.props.accounts.map((item, i) => {
-            return <li key={i}>{item}</li>
-          })}
-           {/* <li>{this.accList}</li>  */}
-        </ul>
-      </div>
+      <form className="pure-form">
+        <fieldset>
+          <legend>Save a string Input to account</legend>
+          <input type="text" placeholder={this.state.placeholder} 
+                onChange={(event) => this.setState({placeholder: event.target.value})} value={this.state.placeholder} />
+          <button onClick={this.handleClick} type="submit" style={btnStyle} 
+                className="pure-button pure-button-primary btnStyle">Save</button>
+        </fieldset>
+      </form>
     )
   }
 }
-
 
 
 class App extends Component {
@@ -80,7 +120,9 @@ class App extends Component {
         simpleStorageInstance = instance
 
         return simpleStorageInstance.getString.call(accounts[0])}).then((result) => {
-          return this.setState({ storageString: result })
+          //return
+          this.setState({ storageString: result })
+          this.forceUpdate()
       })
     })
   }
@@ -101,10 +143,12 @@ class App extends Component {
         }).then((res) => {
           return SSInstance.getString.call(accounts[0])
         }).then((res) => {
-          return this.setState({storageString: res})
+          this.setState({storageString: res})
+          this.forceUpdate();
         })
       })
     })
+    this.forceUpdate()
   }
 
 
@@ -113,28 +157,35 @@ class App extends Component {
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
             <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
+            <a style={navLink} href="#" className="pure-menu-heading pure-menu-link">Login</a>
         </nav>
 
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
                <h2>Smart Contract Example</h2>
-               <AccountsList accounts={this.state.accountsList}/>  
+               <TodoList accounts={this.state.accountsList} />
+               {/* <AccountsList accounts={this.state.accountsList}/>   */}
             </div>
           </div>
+          {/* <FormStringSave pl={this.state.placeholder} saveStringRef={this.saveString} /> */}
+          <form className="pure-form">
+            <fieldset>
+              <legend>Save a string Input to account</legend>
+              <input type="text" placeholder={this.state.placeholder} 
+                    onChange={(event) => this.setState({placeholder: event.target.value})} value={this.state.placeholder} />
+              <ButtonSave pl={this.state.placeholder} saveStringRef={this.saveString} />
+            </fieldset>
+          </form>
           <div>
-            <h3>lets try saving string inputs</h3>
-            <div>
-            <input type="text"
-              placeholder={this.state.placeholder}
-              value={this.state.placeholder}
-              onChange={(event) => this.setState({ placeholder: event.target.value })} />
-                      
-            <ButtonSave pl={this.state.placeholder} saveStringRef={this.saveString} />
             <h4>Storage String is: {this.state.storageString}</h4>
-            </div>
           </div>
         </main>
+        <footer>
+          Created by Cameron Heilman - Adrian Rodriguez
+          <br/>
+          <a href="https://github.com/ctheilman92/ReactSolid/">React Solid Repo</a>
+        </footer>
       </div>
     );
   }

@@ -12,10 +12,12 @@ import './App.css'
 //region inline-styles
 var btnStyle = {
   margin: '7px',
-  borderRadius: '5px'
+  borderRadius: '5px',
+  height: '2.6em'
 }
 
 var navLink = {
+  fontSize: '16px',
   float: 'right',
   width: '50px'
 }
@@ -46,51 +48,37 @@ class TodoList extends Component {
 }
 
 
-class ButtonSave extends Component {
-  handleClick = () => {
-    this.props.saveStringRef(this.props.pl)
-  }
-
-  render() {
-    return (
-      <button onClick={this.handleClick} type="submit" style={btnStyle} 
-      className="pure-button pure-button-primary btnStyle">Save</button>
-    )
-  }
-}
-
 class FormStringSave extends Component {
   handleClick = () => {
-    this.props.saveStringRef(this.props.pl)
+    this.props.saveStringRef(this.props.pl);
   }
+
+  handleOnChange = (e) => {
+    this.props.updatePLRef(e.target.value)
+  }
+
 
   render() {
     return (
-      <form className="pure-form">
+      <div className="pure-form">
         <fieldset>
           <legend>Save a string Input to account</legend>
-          <input type="text" placeholder={this.state.placeholder} 
-                onChange={(event) => this.setState({placeholder: event.target.value})} value={this.state.placeholder} />
-          <button onClick={this.handleClick} type="submit" style={btnStyle} 
-                className="pure-button pure-button-primary btnStyle">Save</button>
+          <input style={{marginLeft: "10px", marginRight: "5px"}} type="text" placeholder={this.props.pl} 
+            onChange={(event) => this.handleOnChange(event)} value={this.props.pl} />
+          <button type="submit" style={btnStyle} className="pure-button pure-button-primary" onClick={() => {this.handleClick()}}>Save</button>
         </fieldset>
-      </form>
+      </div>
     )
   }
 }
 
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
+  state = {
       accountsList: [],
       placeholder: 'SaveString',
       storageString: 'null',
-      storageValue: 0,
       web3: null
-    }
   }
 
   componentWillMount() {
@@ -121,7 +109,8 @@ class App extends Component {
 
         return simpleStorageInstance.getString.call(accounts[0])}).then((result) => {
           //return
-          this.setState({ storageString: result })
+          var ret = (result === '') ? 'null' : result;
+          this.setState({ storageString: ret })
           this.forceUpdate()
       })
     })
@@ -143,7 +132,8 @@ class App extends Component {
         }).then((res) => {
           return SSInstance.getString.call(accounts[0])
         }).then((res) => {
-          this.setState({storageString: res})
+          var ret = (res === '') ? 'null' : res
+          this.setState({storageString: ret})
           this.forceUpdate();
         })
       })
@@ -151,6 +141,9 @@ class App extends Component {
     this.forceUpdate()
   }
 
+  updatePlaceholder = (pl) => {
+    this.setState({ placeholder: pl })
+  }
 
   render() {
     return (
@@ -158,6 +151,7 @@ class App extends Component {
         <nav className="navbar pure-menu pure-menu-horizontal">
             <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
             <a style={navLink} href="#" className="pure-menu-heading pure-menu-link">Login</a>
+            <a style={navLink} href="#" className="pure-menu-heading pure-menu-link">Sign Up</a>
         </nav>
 
         <main className="container">
@@ -168,15 +162,9 @@ class App extends Component {
                {/* <AccountsList accounts={this.state.accountsList}/>   */}
             </div>
           </div>
-          {/* <FormStringSave pl={this.state.placeholder} saveStringRef={this.saveString} /> */}
-          <form className="pure-form">
-            <fieldset>
-              <legend>Save a string Input to account</legend>
-              <input type="text" placeholder={this.state.placeholder} 
-                    onChange={(event) => this.setState({placeholder: event.target.value})} value={this.state.placeholder} />
-              <ButtonSave pl={this.state.placeholder} saveStringRef={this.saveString} />
-            </fieldset>
-          </form>
+          <div className="formView">
+           <FormStringSave updatePLRef={this.updatePlaceholder} pl={this.state.placeholder} saveStringRef={this.saveString} /> 
+          </div>
           <div>
             <h4>Storage String is: {this.state.storageString}</h4>
           </div>

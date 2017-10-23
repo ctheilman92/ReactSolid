@@ -3,3 +3,8 @@ footer {
     color: slateblue;
     font-size: 12px;
 }
+
+.formView {
+    width: 80%;
+    margin-top: 3em;
+}

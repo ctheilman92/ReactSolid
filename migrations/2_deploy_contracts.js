@@ -1,6 +1,6 @@
 var SimpleStorage = artifacts.require("./SimpleStorage.sol");
-var Login = artifacts.require("./Login.sol")
+var Accounts = artifacts.require("./Accounts.sol")
 module.exports = function(deployer) {
   deployer.deploy(SimpleStorage);
-  deployer.deploy(Login);
+  deployer.deploy(Accounts);
 };

@@ -80,7 +80,7 @@ class App extends Component {
       storageString: 'null',
       web3: null
   }
-
+  //#region APP METHODS
   componentWillMount() {
     // Get network provider and web3 instance.
     // See utils/getWeb3 for more info.
@@ -144,6 +144,7 @@ class App extends Component {
   updatePlaceholder = (pl) => {
     this.setState({ placeholder: pl })
   }
+  //#endregion
 
   render() {
     return (

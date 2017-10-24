@@ -6,17 +6,17 @@ contract Accounts {
   mapping(address => User) mUsers;
   address[] Users;
 
-  mapping(bytes32 => Status) mStatus;
-  bytes32[] StatusesByHash;
+  mapping(bytes32 => Task) mTask;
+  bytes32[] TasksByHash;
 
-  struct Status {
+  struct Task {
     uint timeStamp;
-    string message;
+    string description;
   }
 
   struct User {
     string handle;
-    bytes32[] statusList;
+    bytes32[] taskList;
   }
 
   function addNewUser(string _handle) returns (bool success) {
@@ -32,20 +32,20 @@ contract Accounts {
     }
   }
 
-  function addStatusToUser(string _msg, bytes32 SHA256StatusHash) returns (bool success) {
+  function addStatusToUser(string _task, bytes32 SHA256TaskHash) returns (bool success) {
     address saveAddr = msg.sender;
 
-    //if user exists in address and the message is not null
-    if (bytes(mUsers[saveAddr].handle).length != 0 && bytes(_msg).length != 0) {
-      if (bytes(_msg).length != 0) {
-        StatusesByHash.push(SHA256StatusHash);
+    //if user exists in address and the description is not null
+    if (bytes(mUsers[saveAddr].handle).length != 0 && bytes(_task).length != 0) {
+      if (bytes(_task).length != 0) {
+        TasksByHash.push(SHA256TaskHash);
 
-        mStatus[SHA256StatusHash].message = _msg;
-        mStatus[SHA256StatusHash].timeStamp = block.timestamp;
+        mTask[SHA256TaskHash].description = _task;
+        mTask[SHA256TaskHash].timeStamp = block.timestamp;
         return true;
-      } else { return false; }
+      } else {return false;}
       return true;
-    } else { return false; }
+    } else {return false;}
   }
 
   //region getters
@@ -56,20 +56,20 @@ contract Accounts {
   function getUser(address userAddr) constant returns (string, bytes32[]) {
     return (
       mUsers[userAddr].handle,
-      mUsers[userAddr].statusList
+      mUsers[userAddr].taskList
     );
   }
 
-  function getUserStatuses(address userAddr) constant returns (bytes32[]) {
-    return mUsers[userAddr].statusList;
+  function getUserTask(address userAddr) constant returns (bytes32[]) {
+    return mUsers[userAddr].taskList;
   } 
 
-  function getAllStatuses() constant returns (bytes32[]) {
-    return StatusesByHash;
+  function getAllTasks() constant returns (bytes32[]) {
+    return TasksByHash;
   }
 
-  function getStatus(bytes32 SHA256StatusHash) constant returns (string) {
-    return mStatus[SHA256StatusHash].message;
+  function getTask(bytes32 SHA256TaskHash) constant returns (string) {
+    return mTask[SHA256TaskHash].description;
   }
   //endregion
 }

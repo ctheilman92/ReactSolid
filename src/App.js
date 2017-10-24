@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
+import AccountsContract from '../build/contracts/Accounts.json'
 import getWeb3 from './utils/getWeb3'
 
 import './css/styles.css'
@@ -9,7 +10,8 @@ import './css/pure-min.css'
 import './App.css'
 
 
-//region inline-styles
+//#region inline styles
+
 var btnStyle = {
   margin: '7px',
   borderRadius: '5px',
@@ -22,7 +24,18 @@ var navLink = {
   width: '50px'
 }
 
-//endregion
+//#endregion
+class FormLogin extends Component {
+  render() {
+    return (
+      <div>
+
+      </div>
+    )
+  }
+}
+
+
 class TodoList extends Component {
   
   render() {
@@ -75,7 +88,9 @@ class FormStringSave extends Component {
 
 class App extends Component {
   state = {
-      accountsList: [],
+      BlockchainAddresses: [],
+      registeredAccounts: [],   //not set
+      TaskList: [],             //not set
       placeholder: 'SaveString',
       storageString: 'null',
       web3: null
@@ -87,33 +102,48 @@ class App extends Component {
     getWeb3
     .then(results => {
       this.setState({web3: results.web3})
-      this.instantiateContract()  //instantiate contract
+      this.instantiateContracts()  //instantiate contract
     }).catch(() => {
       console.log('Error finding web3.')
     })
 
   }
 
-  instantiateContract() {
+  instantiateContracts() {
     const contract = require('truffle-contract')
     const simpleStorage = contract(SimpleStorageContract)
+    const AccountsCtr = contract(AccountsContract)
     simpleStorage.setProvider(this.state.web3.currentProvider)
-    var simpleStorageInstance // Declaring this for later so we can chain functions on SimpleStorage.
+    AccountsCtr.setProvider(this.setState.web3.currentProvider)
+    var contractInstance // Declaring this for later so we can chain functions on SimpleStorage.
 
-    // Get accounts.
+    // Get block chain addresses --- only returns the current address selected in metamask (web3 current addr)
     this.state.web3.eth.getAccounts((error, accounts) => {
-      this.setState({accountsList: accounts})
+      this.setState({BlockchainAddresses: accounts})
 
+      //INIT SIMPLE STORAGE CONTRACT
       simpleStorage.deployed().then((instance) => {
-        simpleStorageInstance = instance
+        contractInstance = instance
 
-        return simpleStorageInstance.getString.call(accounts[0])}).then((result) => {
+        return contractInstance.getString.call(accounts[0])}).then((result) => {
           //return
           var ret = (result === '') ? 'null' : result;
           this.setState({ storageString: ret })
           this.forceUpdate()
       })
+
+      //INIT ACCOUNTS CONTRACT
+      AccountsCtr.deployed().then((instance) => {
+        contractInstance = instance
+
+        return 
+      })
     })
+  }
+
+  registerUser() {
+
+
   }
 
   saveString = (ss) => {
@@ -134,11 +164,9 @@ class App extends Component {
         }).then((res) => {
           var ret = (res === '') ? 'null' : res
           this.setState({storageString: ret})
-          this.forceUpdate();
         })
       })
     })
-    this.forceUpdate()
   }
 
   updatePlaceholder = (pl) => {
@@ -158,8 +186,8 @@ class App extends Component {
           <div className="pure-g">
             <div className="pure-u-1-1">
                <h2>Smart Contract Example</h2>
-               <TodoList accounts={this.state.accountsList} />
-               {/* <AccountsList accounts={this.state.accountsList}/>   */}
+               <TodoList accounts={this.state.BlockchainAddresses} />
+               {/* <AccountsList accounts={this.state.BlockchainAddresses}/>   */}
             </div>
           </div>
           <div className="formView">
@@ -178,5 +206,4 @@ class App extends Component {
     );
   }
 }
-
 export default App

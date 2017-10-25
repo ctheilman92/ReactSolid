@@ -54,6 +54,7 @@
     "react-dom": "^15.4.2"
   },
   "scripts": {
+    "rpc": "python scripts/testrpc.py",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"

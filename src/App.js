@@ -125,25 +125,23 @@ class App extends Component {
       simpleStorage.deployed().then((instance) => {
         contractInstance = instance
 
-        return contractInstance.getString.call(accounts[0])}).then((result) => {
-          //return
-          var ret = (result === '') ? 'null' : result;
+        return contractInstance.getString.call(accounts[0])}).then((res) => {
+          var ret = (res === '') ? 'null' : res;
           this.setState({ storageString: ret })
           this.forceUpdate()
-      })
+        })
 
       //INIT ACCOUNTS CONTRACT
       AccountsCtr.deployed().then((instance) => {
         contractInstance = instance
 
-        return 
-      })
+        return contractInstance.getUsers.call(accounts[0])}).then((res) => {
+          this.setState({ registeredAccounts: res })
+        })
     })
   }
 
-  registerUser() {
-
-
+  registerUser = () => {
   }
 
   saveString = (ss) => {

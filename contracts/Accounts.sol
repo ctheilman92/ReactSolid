@@ -4,10 +4,10 @@ contract Accounts {
   address Owner;
 
   mapping(address => User) mUsers;
-  address[] Users;
+  address[] public Users;
 
   mapping(bytes32 => Task) mTask;
-  bytes32[] TasksByHash;
+  bytes32[]  public TasksByHash;
 
   struct Task {
     uint timeStamp;

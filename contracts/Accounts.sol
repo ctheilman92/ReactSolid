@@ -1,17 +1,17 @@
 pragma solidity ^0.4.4;
 
 contract Accounts {
-  address Owner;
 
-  mapping(address => User) mUsers;
+  mapping(address => User) public mUsers;
   address[] public Users;
 
-  mapping(bytes32 => Task) mTask;
-  bytes32[]  public TasksByHash;
+  mapping(bytes32 => Task) public mTasks;
+  bytes32[] public TasksByHash;
 
   struct Task {
     uint timeStamp;
     string description;
+    bool isComplete;
   }
 
   struct User {
@@ -23,7 +23,7 @@ contract Accounts {
     address newUserAddr = msg.sender;
     
     //if handle not in userAddresses & the handle is not null
-    if (bytes(mUsers[msg.sender].handle).length == 0 && bytes(_handle).length != 0) {
+    if (bytes(mUsers[newUserAddr].handle).length == 0 && bytes(_handle).length != 0) {
       mUsers[newUserAddr].handle = _handle;
       Users.push(newUserAddr);
       return true;
@@ -32,20 +32,28 @@ contract Accounts {
     }
   }
 
-  function addStatusToUser(string _task, bytes32 SHA256TaskHash) returns (bool success) {
+  //best practice -- generate random sha256 32byte string to pass in
+  //in this case the sha256hash will act as the global identity for this specific task
+  function addTaskToUser(string _task, bytes32 SHA256TaskHash) returns (bool success) {
     address saveAddr = msg.sender;
 
-    //if user exists in address and the description is not null
-    if (bytes(mUsers[saveAddr].handle).length != 0 && bytes(_task).length != 0) {
-      if (bytes(_task).length != 0) {
-        TasksByHash.push(SHA256TaskHash);
+    //check mUsers white pages for registered users
+    if (bytes(mUsers[saveAddr].handle).length != 0) {
+      if (bytes(_task).length != 0 && bytes(mTasks[SHA256TaskHash].description).length == 0) {
+          TasksByHash.push(SHA256TaskHash); //add to tasks whitepages
 
-        mTask[SHA256TaskHash].description = _task;
-        mTask[SHA256TaskHash].timeStamp = block.timestamp;
-        return true;
-      } else {return false;}
+          mTasks[SHA256TaskHash].description = _task;
+          mTasks[SHA256TaskHash].timeStamp = block.timestamp;
+          mTasks[SHA256TaskHash].isComplete = false;
+
+          mUsers[saveAddr].taskList.push(SHA256TaskHash); //add the unique ID - task to the user's task list
+      } else {
+        return false; //task or notary was null or the notary was already saved for another task
+      }
       return true;
-    } else {return false;}
+    } else {
+      return false; //user did not exist in registered users whoops
+    }
   }
 
   //region getters
@@ -60,7 +68,7 @@ contract Accounts {
     );
   }
 
-  function getUserTask(address userAddr) constant returns (bytes32[]) {
+  function getUserTasks(address userAddr) constant returns (bytes32[]) {
     return mUsers[userAddr].taskList;
   } 
 
@@ -69,7 +77,7 @@ contract Accounts {
   }
 
   function getTask(bytes32 SHA256TaskHash) constant returns (string) {
-    return mTask[SHA256TaskHash].description;
+    return mTasks[SHA256TaskHash].description;
   }
   //endregion
 }

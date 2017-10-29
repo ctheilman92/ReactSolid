@@ -9,6 +9,8 @@ import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
+const contract = require('truffle-contract');
+
 
 //#region inline styles
 
@@ -23,8 +25,8 @@ var navLink = {
   float: 'right',
   width: '50px'
 }
-
 //#endregion
+
 class FormLogin extends Component {
   render() {
     return (
@@ -37,7 +39,6 @@ class FormLogin extends Component {
 
 
 class TodoList extends Component {
-  
   render() {
     return (
       <table className="pure-table pure-table-horizontal">
@@ -50,9 +51,10 @@ class TodoList extends Component {
         <tbody>
           <tr>
             <td>1</td>
-            {this.props.accounts.map((item, i) => {
+            <td>{this.props.accounts}</td>
+            {/* {this.props.accounts.map((item, i) => {
               return <td key={i}>{item}</td>
-            })}
+            })} */}
           </tr>
         </tbody>
       </table>
@@ -88,60 +90,64 @@ class FormStringSave extends Component {
 
 class App extends Component {
   state = {
-      BlockchainAddresses: [],
-      registeredAccounts: [],   //not set
+      SenderAddress: null,
+      RegisteredAccounts: [],
+      isRegisteredUser: false,
       TaskList: [],             //not set
-      placeholder: 'SaveString',
-      storageString: 'null',
+      PlaceHolder: 'SaveString',
+      StorageString: 'null',
+      SimpleStorageCtrct: null,
+      AccountsCtrct: null,
       web3: null
   }
   //#region APP METHODS
   componentWillMount() {
-    // Get network provider and web3 instance.
-    // See utils/getWeb3 for more info.
+    // Get network provider and web3 instance. -- See utils/getWeb3 for more info.
     getWeb3
     .then(results => {
       this.setState({web3: results.web3})
-      this.instantiateContracts()  //instantiate contract
+      this.instantiateContract()  //instantiate contract
     }).catch(() => {
       console.log('Error finding web3.')
     })
-
   }
 
-  instantiateContracts() {
-    const contract = require('truffle-contract')
-    const simpleStorage = contract(SimpleStorageContract)
-    const AccountsCtr = contract(AccountsContract)
-    simpleStorage.setProvider(this.state.web3.currentProvider)
-    AccountsCtr.setProvider(this.setState.web3.currentProvider)
-    var contractInstance // Declaring this for later so we can chain functions on SimpleStorage.
+  instantiateContract() {
+    //const simpleStorage = contract(SimpleStorageContract)
+    this.setState({ SimpleStorageCtrct: contract(SimpleStorageContract) })
+    this.setState({ AccountsCtrct: contract(AccountsContract) })
+    this.state.SimpleStorageCtrct.setProvider(this.state.web3.currentProvider)
+    this.state.AccountsCtrct.setProvider(this.state.web3.currentProvider)
 
-    // Get block chain addresses --- only returns the current address selected in metamask (web3 current addr)
+    //Get block chain addresses --- only returns the current address selected in metamask (web3 current addr)
     this.state.web3.eth.getAccounts((error, accounts) => {
-      this.setState({BlockchainAddresses: accounts})
+      this.setState({ SenderAddress: accounts[0] })
 
+      var ssDeployed = this.state.SimpleStorageCtrct.deployed()
+      var acctDeployed = this.state.AccountsCtrct.deployed()
       //INIT SIMPLE STORAGE CONTRACT
-      simpleStorage.deployed().then((instance) => {
-        contractInstance = instance
-
-        return contractInstance.getString.call(accounts[0])}).then((res) => {
+      ssDeployed.then((instance) => {
+        return instance.getString()}).then((res) => {
           var ret = (res === '') ? 'null' : res;
-          this.setState({ storageString: ret })
+          this.setState({ StorageString: ret })
           this.forceUpdate()
         })
 
       //INIT ACCOUNTS CONTRACT
-      AccountsCtr.deployed().then((instance) => {
-        contractInstance = instance
-
-        return contractInstance.getUsers.call(accounts[0])}).then((res) => {
-          this.setState({ registeredAccounts: res })
+      acctDeployed.then((instance) => {
+        return instance.getUsers()}).then((res) => {
+          this.setState({ 
+            RegisteredAccounts: res 
+          })
+          
+          if (res.includes(this.state.SenderAddress)) {
+            this.setState({ isRegisteredUser: true })
+          }
         })
     })
   }
 
-  registerUser = () => {
+  registerUser = (handle) => {
   }
 
   saveString = (ss) => {
@@ -158,17 +164,16 @@ class App extends Component {
 
           return SSInstance.setString(ss, {from: accounts[0]})
         }).then((res) => {
-          return SSInstance.getString.call(accounts[0])
-        }).then((res) => {
+          return SSInstance.getString()}).then((res) => {
           var ret = (res === '') ? 'null' : res
-          this.setState({storageString: ret})
+          this.setState({StorageString: ret})
         })
       })
     })
   }
 
   updatePlaceholder = (pl) => {
-    this.setState({ placeholder: pl })
+    this.setState({ PlaceHolder: pl })
   }
   //#endregion
 
@@ -185,15 +190,15 @@ class App extends Component {
           <div className="pure-g">
             <div className="pure-u-1-1">
                <h2>Smart Contract Example</h2>
-               <TodoList accounts={this.state.BlockchainAddresses} />
+               <TodoList accounts={this.state.SenderAddress} />
                {/* <AccountsList accounts={this.state.BlockchainAddresses}/>   */}
             </div>
           </div>
           <div className="formView">
-           <FormStringSave updatePLRef={this.updatePlaceholder} pl={this.state.placeholder} saveStringRef={this.saveString} /> 
+           <FormStringSave updatePLRef={this.updatePlaceholder} pl={this.state.PlaceHolder} saveStringRef={this.saveString} /> 
           </div>
           <div>
-            <h4>Storage String is: {this.state.storageString}</h4>
+            <h4>Storage String is: {this.state.StorageString}</h4>
           </div>
         </main>
         <footer>

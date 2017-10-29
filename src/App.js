@@ -93,7 +93,7 @@ class App extends Component {
       SenderAddress: null,
       RegisteredAccounts: [],
       isRegisteredUser: false,
-      TaskList: [],             //not set
+      SenderTaskList: [],             //not set
       PlaceHolder: 'SaveString',
       StorageString: 'null',
       SimpleStorageCtrct: null,
@@ -106,14 +106,13 @@ class App extends Component {
     getWeb3
     .then(results => {
       this.setState({web3: results.web3})
-      this.instantiateContract()  //instantiate contract
+      this.instantiateContracts()  //instantiate contract
     }).catch(() => {
       console.log('Error finding web3.')
     })
   }
 
-  instantiateContract() {
-    //const simpleStorage = contract(SimpleStorageContract)
+  instantiateContracts() {
     this.setState({ SimpleStorageCtrct: contract(SimpleStorageContract) })
     this.setState({ AccountsCtrct: contract(AccountsContract) })
     this.state.SimpleStorageCtrct.setProvider(this.state.web3.currentProvider)
@@ -136,12 +135,10 @@ class App extends Component {
       //INIT ACCOUNTS CONTRACT
       acctDeployed.then((instance) => {
         return instance.getUsers()}).then((res) => {
-          this.setState({ 
-            RegisteredAccounts: res 
-          })
+          this.setState({ RegisteredAccounts: res })
           
-          if (res.includes(this.state.SenderAddress)) {
-            this.setState({ isRegisteredUser: true })
+          if (res.includes(this.state.SenderAddress)) { 
+            this.setState({ isRegisteredUser: true }) 
           }
         })
     })

@@ -8,3 +8,8 @@ footer {
     width: 80%;
     margin-top: 3em;
 }
+
+.flexContainer {
+    display: flex;
+    justify-content: center;
+}

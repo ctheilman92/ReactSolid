@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
 import AccountsContract from '../build/contracts/Accounts.json'
 import getWeb3 from './utils/getWeb3'
+import Modal from 'react-awesome-modal';
 
 import './css/styles.css'
 import './css/oswald.css'
@@ -13,29 +14,26 @@ const contract = require('truffle-contract');
 
 
 //#region inline styles
-
-var btnStyle = {
+const btnStyle = {
   margin: '7px',
   borderRadius: '5px',
-  height: '2.6em'
+  height: '2.6em',
+  width: '9em',
 }
 
-var navLink = {
+const navLink = {
   fontSize: '16px',
   float: 'right',
   width: '50px'
 }
-//#endregion
 
-class FormLogin extends Component {
-  render() {
-    return (
-      <div>
-
-      </div>
-    )
-  }
+const modalFormView = {
+  marginLeft: '1em',
+  marginRight: '1em',
+  marginBottom: '1em'
 }
+
+//#endregion
 
 
 class TodoList extends Component {
@@ -72,7 +70,6 @@ class FormStringSave extends Component {
     this.props.updatePLRef(e.target.value)
   }
 
-
   render() {
     return (
       <div className="pure-form">
@@ -88,8 +85,76 @@ class FormStringSave extends Component {
 }
 
 
+class ModalUserNav extends Component {
+  state = {
+    unpl: "UserName",
+    pwpl: "Password",
+    errorVisible: false
+  }
+
+  togglError = () => {
+    this.setState(prevstate => ({
+      errorVisible: !prevstate.errorVisible
+    }));
+  }
+
+  handleOnChangePL = (e) => {
+    this.setState({ [e.target.name]: e.target.value})
+  }
+
+  handleSubmit = () => {
+    
+  }
+
+  render() {
+    return (
+      <section>
+          <Modal visible={this.props.visible} effect="fadeInUp">
+              { this.props.isRegistered
+
+                // if user is registered already
+                ? <div className="pure-form">
+                    <fieldset style={modalFormView}>
+                      <legend style={{fontSize: "18px"}}><b>Login so we can get shit done</b></legend>
+                      <div className="flexContainer">
+                        <input style={{marginLeft: "10px", marginRight: "5px"}} type="text" name="unpl" placeholder={this.state.unpl} onChange={(event) => {this.handleOnChangePL(event)}} value={this.state.unpl} />
+                        <input style={{marginLeft: "10px", marginRight: "5px"}} type="text" name="pwpl" placeholder={this.state.pwpl} onChange={(event) => {this.handleOnChangePL(event)}} value={this.state.pwpl} />
+                        <br/>
+                      </div>
+                      <div className="flexContainer" style={{margin: ".7em"}}>
+                      <button type="submit" style={btnStyle} className="pure-button pure-button-primary" onClick={() => {this.handleSubmit()}}><b>Login</b></button>
+                      </div>
+                    </fieldset>
+                  </div>
+
+                // if the user is not registered
+                : <div className="pure-form">
+                    <fieldset style={modalFormView}>
+                      <legend style={{fontSize: "18px"}}><b>To get started: All you need is a handle!</b></legend>
+                      <div className="flexContainer">
+                        <input style={{marginTop: "7px", height: "2.6em", marginLeft: "5px", marginRight: "5px"}} type="text" name="unpl" placeholder={this.state.unpl} onChange={(event) => {this.handleOnChangePL(event)}} value={this.state.unpl} />
+                        <button style={btnStyle} type="submit" className="pure-button pure-button-primary" onClick={() => {this.props.registerUser(this.state.unpl)}}><b>Login</b></button>
+                      </div>
+                    </fieldset>
+                  </div>
+              }
+              
+              <div className="flexContainer">
+                { this.state.errorVisible ? <h4>Login Attempt Failed: handle does not match your specified address</h4> : null }
+              </div>
+              <div className="flexContainer">
+                <a href="" onClick={() => this.props.toggleModal()}>Close</a>
+              </div>
+          </Modal>
+      </section>
+    )
+  }
+}
+
+
 class App extends Component {
   state = {
+      modalOpen: false,
       SenderAddress: null,
       RegisteredAccounts: [],
       isRegisteredUser: false,
@@ -126,7 +191,7 @@ class App extends Component {
       var acctDeployed = this.state.AccountsCtrct.deployed()
       //INIT SIMPLE STORAGE CONTRACT
       ssDeployed.then((instance) => {
-        return instance.getString()}).then((res) => {
+        return instance.getString(); }).then((res) => {
           var ret = (res === '') ? 'null' : res;
           this.setState({ StorageString: ret })
           this.forceUpdate()
@@ -134,10 +199,11 @@ class App extends Component {
 
       //INIT ACCOUNTS CONTRACT
       acctDeployed.then((instance) => {
-        return instance.getUsers()}).then((res) => {
+        return instance.getUsers(); }).then((res) => {
           this.setState({ RegisteredAccounts: res })
-          
-          if (res.includes(this.state.SenderAddress)) { 
+          console.log("account users result: " + this.state.RegisteredAccounts[1])
+
+          if (this.state.RegisteredAccounts.includes(this.state.SenderAddress)) { 
             this.setState({ isRegisteredUser: true }) 
           }
         })
@@ -145,6 +211,13 @@ class App extends Component {
   }
 
   registerUser = (handle) => {
+    console.log(handle)
+    var acctDeployed = this.state.AccountsCtrct.deployed()
+
+    acctDeployed.then((inst) => { 
+      return inst.addNewUser(handle); }).then((res) => {
+        console.log('result of new User add: ' + res)
+    })
   }
 
   saveString = (ss) => {
@@ -169,6 +242,12 @@ class App extends Component {
     })
   }
 
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modalOpen: !prevState.modalOpen
+    }));
+  }
+
   updatePlaceholder = (pl) => {
     this.setState({ PlaceHolder: pl })
   }
@@ -179,8 +258,11 @@ class App extends Component {
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
             <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
-            <a style={navLink} href="#" className="pure-menu-heading pure-menu-link">Login</a>
-            <a style={navLink} href="#" className="pure-menu-heading pure-menu-link">Sign Up</a>
+            {
+            this.state.isRegisteredUser
+              ? <a style={navLink} onClick={ this.toggleModal } href="#" className="pure-menu-heading pure-menu-link">Login</a>
+              : <a style={navLink} onClick={ this.toggleModal } href="#" className="pure-menu-heading pure-menu-link">Register</a>
+            }
         </nav>
 
         <main className="container">
@@ -188,16 +270,22 @@ class App extends Component {
             <div className="pure-u-1-1">
                <h2>Smart Contract Example</h2>
                <TodoList accounts={this.state.SenderAddress} />
-               {/* <AccountsList accounts={this.state.BlockchainAddresses}/>   */}
             </div>
           </div>
           <div className="formView">
            <FormStringSave updatePLRef={this.updatePlaceholder} pl={this.state.PlaceHolder} saveStringRef={this.saveString} /> 
           </div>
           <div>
+            
             <h4>Storage String is: {this.state.StorageString}</h4>
           </div>
         </main>
+
+        <ModalUserNav visible={this.state.modalOpen}
+              toggleModal={this.toggleModal}
+              isRegistered={this.state.isRegisteredUser}
+              registerUser={this.registerUser} />
+
         <footer>
           Created by Cameron Heilman - Adrian Rodriguez
           <br/>

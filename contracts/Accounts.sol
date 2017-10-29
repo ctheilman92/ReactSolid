@@ -3,10 +3,11 @@ pragma solidity ^0.4.4;
 contract Accounts {
 
   mapping(address => User) public mUsers;
-  address[] public Users;
+  address[] public Users;               //users whitepages
 
   mapping(bytes32 => Task) public mTasks;
-  bytes32[] public TasksByHash;
+  bytes32[] public TasksByHash;         //tasks whitepages
+
 
   struct Task {
     uint timeStamp;

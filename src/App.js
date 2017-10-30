@@ -32,7 +32,6 @@ const modalFormView = {
   marginRight: '1em',
   marginBottom: '1em'
 }
-
 //#endregion
 
 
@@ -110,34 +109,15 @@ class ModalUserNav extends Component {
     return (
       <section>
           <Modal visible={this.props.visible} effect="fadeInUp">
-              { this.props.isRegistered
-
-                // if user is registered already
-                ? <div className="pure-form">
-                    <fieldset style={modalFormView}>
-                      <legend style={{fontSize: "18px"}}><b>Login so we can get shit done</b></legend>
-                      <div className="flexContainer">
-                        <input style={{marginLeft: "10px", marginRight: "5px"}} type="text" name="unpl" placeholder={this.state.unpl} onChange={(event) => {this.handleOnChangePL(event)}} value={this.state.unpl} />
-                        <input style={{marginLeft: "10px", marginRight: "5px"}} type="text" name="pwpl" placeholder={this.state.pwpl} onChange={(event) => {this.handleOnChangePL(event)}} value={this.state.pwpl} />
-                        <br/>
-                      </div>
-                      <div className="flexContainer" style={{margin: ".7em"}}>
-                      <button type="submit" style={btnStyle} className="pure-button pure-button-primary" onClick={() => {this.handleSubmit()}}><b>Login</b></button>
-                      </div>
-                    </fieldset>
+            <div className="pure-form">
+                <fieldset style={modalFormView}>
+                  <legend style={{fontSize: "18px"}}><b>Register now. All you need is a handle!</b></legend>
+                  <div className="flexContainer">
+                    <input style={{marginTop: "7px", height: "2.6em", marginLeft: "5px", marginRight: "5px"}} type="text" name="unpl" placeholder={this.state.unpl} onChange={(event) => {this.handleOnChangePL(event)}} value={this.state.unpl} />
+                    <button style={btnStyle} type="submit" className="pure-button pure-button-primary" onClick={() => {this.props.registerUser(this.state.unpl)}}><b>Login</b></button>
                   </div>
-
-                // if the user is not registered
-                : <div className="pure-form">
-                    <fieldset style={modalFormView}>
-                      <legend style={{fontSize: "18px"}}><b>To get started: All you need is a handle!</b></legend>
-                      <div className="flexContainer">
-                        <input style={{marginTop: "7px", height: "2.6em", marginLeft: "5px", marginRight: "5px"}} type="text" name="unpl" placeholder={this.state.unpl} onChange={(event) => {this.handleOnChangePL(event)}} value={this.state.unpl} />
-                        <button style={btnStyle} type="submit" className="pure-button pure-button-primary" onClick={() => {this.props.registerUser(this.state.unpl)}}><b>Login</b></button>
-                      </div>
-                    </fieldset>
-                  </div>
-              }
+                </fieldset>
+              </div>
               
               <div className="flexContainer">
                 { this.state.errorVisible ? <h4>Login Attempt Failed: handle does not match your specified address</h4> : null }
@@ -201,7 +181,7 @@ class App extends Component {
       acctDeployed.then((instance) => {
         return instance.getUsers(); }).then((res) => {
           this.setState({ RegisteredAccounts: res })
-          console.log("account users result: " + this.state.RegisteredAccounts[1])
+          console.log("account users result: " + res)
 
           if (this.state.RegisteredAccounts.includes(this.state.SenderAddress)) { 
             this.setState({ isRegisteredUser: true }) 
@@ -259,9 +239,9 @@ class App extends Component {
         <nav className="navbar pure-menu pure-menu-horizontal">
             <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
             {
-            this.state.isRegisteredUser
-              ? <a style={navLink} onClick={ this.toggleModal } href="#" className="pure-menu-heading pure-menu-link">Login</a>
-              : <a style={navLink} onClick={ this.toggleModal } href="#" className="pure-menu-heading pure-menu-link">Register</a>
+              !this.state.isRegisteredUser
+              ? <a style={navLink} onClick={ this.toggleModal } href="#" className="pure-menu-heading pure-menu-link">Register</a>
+              : null
             }
         </nav>
 

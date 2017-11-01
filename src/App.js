@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
 import AccountsContract from '../build/contracts/Accounts.json'
 import getWeb3 from './utils/getWeb3'
 import Modal from 'react-awesome-modal';
@@ -60,34 +59,11 @@ class TodoList extends Component {
 }
 
 
-class FormStringSave extends Component {
-  handleClick = () => {
-    this.props.saveStringRef(this.props.pl);
-  }
-
-  handleOnChange = (e) => {
-    this.props.updatePLRef(e.target.value)
-  }
-
-  render() {
-    return (
-      <div className="pure-form">
-        <fieldset>
-          <legend>Save a string Input to account</legend>
-          <input style={{marginLeft: "10px", marginRight: "5px"}} type="text" placeholder={this.props.pl} 
-            onChange={(event) => this.handleOnChange(event)} value={this.props.pl} />
-          <button type="submit" style={btnStyle} className="pure-button pure-button-primary" onClick={() => {this.handleClick()}}>Save</button>
-        </fieldset>
-      </div>
-    )
-  }
-}
-
-
 class ModalUserNav extends Component {
   state = {
     unpl: "UserName",
     pwpl: "Password",
+    errorCode: 'Registration Failed',
     errorVisible: false
   }
 
@@ -102,7 +78,19 @@ class ModalUserNav extends Component {
   }
 
   handleSubmit = () => {
-    
+    if (this.state.unpl !== "") {
+      this.props.registerUser(this.state.unpl)
+      this.setState({ errorVisible: false })
+      this.props.toggleModal();
+    }
+    else {
+      //if the input is empty update the error code and show
+      console.log('registration failed!')
+      this.setState({
+        errorCode: 'REGISTRATION ERR: empty handles are not allowed!',
+        errorVisible: true
+      })
+    }
   }
 
   render() {
@@ -110,21 +98,21 @@ class ModalUserNav extends Component {
       <section>
           <Modal visible={this.props.visible} effect="fadeInUp">
             <div className="pure-form">
-                <fieldset style={modalFormView}>
-                  <legend style={{fontSize: "18px"}}><b>Register now. All you need is a handle!</b></legend>
-                  <div className="flexContainer">
-                    <input style={{marginTop: "7px", height: "2.6em", marginLeft: "5px", marginRight: "5px"}} type="text" name="unpl" placeholder={this.state.unpl} onChange={(event) => {this.handleOnChangePL(event)}} value={this.state.unpl} />
-                    <button style={btnStyle} type="submit" className="pure-button pure-button-primary" onClick={() => {this.props.registerUser(this.state.unpl)}}><b>Login</b></button>
-                  </div>
-                </fieldset>
-              </div>
+              <fieldset style={modalFormView}>
+                <legend style={{fontSize: "18px"}}><b>Register now. All you need is a handle!</b></legend>
+                <div className="flexContainer">
+                  <input style={{marginTop: "7px", height: "2.6em", marginLeft: "5px", marginRight: "5px"}} type="text" name="unpl" placeholder={this.state.unpl} onChange={(event) => {this.handleOnChangePL(event)}} value={this.state.unpl} />
+                  <button style={btnStyle} type="submit" className="pure-button pure-button-primary" onClick={() => {this.handleSubmit()}}><b>Register</b></button>
+                </div>
+              </fieldset>
+            </div>
               
-              <div className="flexContainer">
-                { this.state.errorVisible ? <h4>Login Attempt Failed: handle does not match your specified address</h4> : null }
-              </div>
-              <div className="flexContainer">
-                <a href="" onClick={() => this.props.toggleModal()}>Close</a>
-              </div>
+            <div className="flexContainer">
+              { this.state.errorVisible ? <p style={{fontSize: "10px", color: "red"}}>{this.state.errorCode}</p> : null }
+            </div>
+            <div className="flexContainer">
+              <a href="" onClick={() => this.props.toggleModal()}>Close</a>
+            </div>
           </Modal>
       </section>
     )
@@ -139,18 +127,14 @@ class App extends Component {
       RegisteredAccounts: [],
       isRegisteredUser: false,
       SenderTaskList: [],             //not set
-      PlaceHolder: 'SaveString',
-      StorageString: 'null',
-      SimpleStorageCtrct: null,
       AccountsCtrct: null,
       web3: null
   }
   //#region APP METHODS
   componentWillMount() {
     // Get network provider and web3 instance. -- See utils/getWeb3 for more info.
-    getWeb3
-    .then(results => {
-      this.setState({web3: results.web3})
+    getWeb3.then(results => {
+      this.setState({ web3: results.web3 })
       this.instantiateContracts()  //instantiate contract
     }).catch(() => {
       console.log('Error finding web3.')
@@ -158,31 +142,19 @@ class App extends Component {
   }
 
   instantiateContracts() {
-    this.setState({ SimpleStorageCtrct: contract(SimpleStorageContract) })
     this.setState({ AccountsCtrct: contract(AccountsContract) })
-    this.state.SimpleStorageCtrct.setProvider(this.state.web3.currentProvider)
     this.state.AccountsCtrct.setProvider(this.state.web3.currentProvider)
 
     //Get block chain addresses --- only returns the current address selected in metamask (web3 current addr)
     this.state.web3.eth.getAccounts((error, accounts) => {
       this.setState({ SenderAddress: accounts[0] })
 
-      var ssDeployed = this.state.SimpleStorageCtrct.deployed()
-      var acctDeployed = this.state.AccountsCtrct.deployed()
-      //INIT SIMPLE STORAGE CONTRACT
-      ssDeployed.then((instance) => {
-        return instance.getString(); }).then((res) => {
-          var ret = (res === '') ? 'null' : res;
-          this.setState({ StorageString: ret })
-          this.forceUpdate()
-        })
-
       //INIT ACCOUNTS CONTRACT
+      var acctDeployed = this.state.AccountsCtrct.deployed()
       acctDeployed.then((instance) => {
         return instance.getUsers(); }).then((res) => {
           this.setState({ RegisteredAccounts: res })
-          console.log("account users result: " + res)
-
+          
           if (this.state.RegisteredAccounts.includes(this.state.SenderAddress)) { 
             this.setState({ isRegisteredUser: true }) 
           }
@@ -191,45 +163,28 @@ class App extends Component {
   }
 
   registerUser = (handle) => {
-    console.log(handle)
-    var acctDeployed = this.state.AccountsCtrct.deployed()
+    var acctInstance
+    this.state.AccountsCtrct.deployed().then((inst) => {
 
-    acctDeployed.then((inst) => { 
-      return inst.addNewUser(handle); }).then((res) => {
-        console.log('result of new User add: ' + res)
-    })
-  }
+      //add current user to this account
+      acctInstance = inst
+      return acctInstance.addNewUser(handle, {from: this.state.SenderAddress}); }).then(() => { 
+        
+        //now we added our user -- update registeredAccounts setState
+        //pass response users array to promise
+        return acctInstance.getUsers() }).then(res => { 
 
-  saveString = (ss) => {
-    getWeb3.then(results => {
-      var SSInstance
-
-      const contract = require('truffle-contract')
-      const simpleStorage = contract(SimpleStorageContract)
-      simpleStorage.setProvider(this.state.web3.currentProvider)
-
-      this.state.web3.eth.getAccounts((error, accounts) => {
-        simpleStorage.deployed().then((inst) => {
-          SSInstance = inst
-
-          return SSInstance.setString(ss, {from: accounts[0]})
-        }).then((res) => {
-          return SSInstance.getString()}).then((res) => {
-          var ret = (res === '') ? 'null' : res
-          this.setState({StorageString: ret})
-        })
-      })
-    })
+          this.setState({ RegisteredAccounts: res })
+          if (res.includes(this.state.SenderAddress)) { 
+            this.setState({ isRegisteredUser: true }) 
+          }
+       })
   }
 
   toggleModal = () => {
     this.setState(prevState => ({
       modalOpen: !prevState.modalOpen
     }));
-  }
-
-  updatePlaceholder = (pl) => {
-    this.setState({ PlaceHolder: pl })
   }
   //#endregion
 
@@ -245,6 +200,11 @@ class App extends Component {
             }
         </nav>
 
+        <ModalUserNav visible={this.state.modalOpen}
+              toggleModal={this.toggleModal}
+              isRegistered={this.state.isRegisteredUser}
+              registerUser={this.registerUser} />
+
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
@@ -252,19 +212,7 @@ class App extends Component {
                <TodoList accounts={this.state.SenderAddress} />
             </div>
           </div>
-          <div className="formView">
-           <FormStringSave updatePLRef={this.updatePlaceholder} pl={this.state.PlaceHolder} saveStringRef={this.saveString} /> 
-          </div>
-          <div>
-            
-            <h4>Storage String is: {this.state.StorageString}</h4>
-          </div>
         </main>
-
-        <ModalUserNav visible={this.state.modalOpen}
-              toggleModal={this.toggleModal}
-              isRegistered={this.state.isRegisteredUser}
-              registerUser={this.registerUser} />
 
         <footer>
           Created by Cameron Heilman - Adrian Rodriguez

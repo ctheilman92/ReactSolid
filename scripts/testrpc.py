@@ -7,5 +7,5 @@ import subprocess
 ###################
 ###################
 
-cmd = 'testrpc -m "Elegant Acrobatic Damsels Greeted Big Elvis Slouchingly For Zonked Fishmongers Choked Greasily"'
+cmd = 'testrpc -m "excuse acoustic category globe step easy diagram ensure total weather lock unaware"'
 proc = subprocess.call(cmd,shell=True)

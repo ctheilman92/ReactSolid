@@ -1,5 +1,8 @@
 pragma solidity ^0.4.4;
 
+
+// NOTE: CHANGE THIS CONTRACT TO HOLD A BILL-LIKE TO DO LIST -- USING VENDORS AND USERS ALONG WITH THE TASKS ALREADY SET UP AS REMINDERS -- INCORPORATE BILL PAYMENTS
+
 contract Accounts {
 
   mapping(address => User) public mUsers;

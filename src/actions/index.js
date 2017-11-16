@@ -6,15 +6,17 @@ const contract = require('truffle-contract');
 const util = require('util');
 
 
-//#region action creators
+//#region THUNK ASYNC ACTION CREATORS
 
-//pass in initialState object for easy copying over reference
 export const loadWeb3 = () => {
-    let newState = initialState //emulate reducer pattern here boi -- GREAT IDEA CAM YEAH ITS 3AM WHY ARE YOU STILL UP
-
+    //we rely on the initialstate imported from our store 
+    let newState = initialState
 
     return (dispatch, getState) => {
-        dispatch(loadWeb3Request())
+        //this will halt the app component from rendering until we finish our async task of fetching our data
+        dispatch({ type: 'LOAD_WEB3_REQUEST' });
+
+
         getWeb3.then(res => { 
             newState.web3 = res.web3;
             newState.AccountsCtrct = contract(AccountsContract);
@@ -34,77 +36,108 @@ export const loadWeb3 = () => {
                                 return inst2.getUser(newState.SenderAddress); }).then(detes => {
                                     newState.SenderHandle = detes[0];
                                     newState.isRegisteredUser = true;
-                                    newState.isFetching = false;
-                                    return dispatch(loadWeb3Success(newState))
+                                    let tasks = detes[1];
+
+                                    
+                                    if (tasks !== '') {
+                                        return newState.AccountsCtrct.deployed().then(inst3 => {
+                                            return inst3.getUserTasks(newState.SenderAddress); }).then(taskHashes => {
+                                                let taskList = []
+                                                taskHashes.map(t => { 
+                                                    newState.AccountsCtrct.deployed().then(inst4 => {
+                                                        return inst4.getTask(t); }).then(restask => { 
+                                                            newState.SenderTaskList.push(restask)
+                                                            return console.log('task details added' + newState.SenderTaskList)
+                                                        })
+                                                })
+
+                                                return dispatch({
+                                                    type: 'LOAD_WEB3_SUCCESS',
+                                                    payload: newState
+                                                })
+                                            })
+                                    }
+
+                                    return dispatch({   
+                                        type: 'LOAD_WEB3_SUCCESS',
+                                        payload: newState
+                                    })
                                 })
                         }
                         else {
-                            newState.isFetching = false;
-                            return dispatch(loadWeb3Success(newState))
+                            //if it reaches this point well no prob
+                            return dispatch({
+                                type: 'LOAD_WEB3_SUCCESS',
+                                payload: newState
+                            });
                         }
                     })
                 })
             
+            }).catch(() => {
+                console.log('ERROR')
+                return dispatch({ type: 'LOAD_WEB3_ERROR' });
             })
     }   
 }
-//#enregion
-export const loadWeb3Request = () => {
-    return {
-        type: 'LOAD_WEB3_REQUEST'
+
+export const registerNewUser = (handle) => {
+    return (dispatch, getState) => {
+        let currState = getState().accounts;
+        dispatch({ type: 'REGISTER_USER_REQUEST' });
+
+        //async register used
+        let acctDeployed = currState.AccountsCtrct.deployed();
+        acctDeployed.then(instance => {
+            return instance.addNewUser(handle, {from: currState.SenderAddress}); }).then(result => {
+                let tmpAccounts = currState.RegisteredAccounts.slice()
+                tmpAccounts.concat(currState.SenderAddress);
+                currState.RegisteredAccounts = tmpAccounts
+                console.log('FROM adduser tempAccounts: ' + tmpAccounts)
+                console.log('FROM adduser state registeredAccounts: ' + currState.RegisteredAccounts)
+                
+                return dispatch({
+                    type: 'REGISTER_USER_SUCCESS',
+                    payload: currState
+                })
+            })
+
+
     }
 }
 
-export const loadWeb3Success = (payload) => {
-    return {
-        type: 'LOAD_WEB3_SUCCESS',
-        payload
-    }
-}
 
-
+//#endregion
 export const addUserTask = () => {
     return {
         type: 'ADD_TASK'
     }
 }
-
-
 export const getUsers = () => {
     return {
         type: 'GET_USER'
     }
 }
-
-
 export const getUserDetail = () => {
     return {
         type: 'GET_USER_DETAIL'
     }
 }
-
-
 export const getAllTasks = () => {
     return {
         type: 'GET_ALL_TASKS'
     }
 }
-
-
 export const getUserTasks = () => {
     return {
         type: 'GET_USER_TASKS'
     }
 }
-
-
 export const getTask = () => {
     return {
         type: 'GET_TASK'
     }
 }
-
-
 export const initWeb3 = () => {
     return {
         type: 'INIT_WEB3'

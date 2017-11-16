@@ -1,7 +1,7 @@
 //react imports
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './components/App/App'
+import App from './components/App'
 
 //redux imports
 import thunk from 'redux-thunk' //this will help with asynchronous operation

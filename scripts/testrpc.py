@@ -8,4 +8,4 @@ import subprocess
 ###################
 
 cmd = 'testrpc -m "excuse acoustic category globe step easy diagram ensure total weather lock unaware"'
-proc = subprocess.call(cmd,shell=True)
+proc = subprocess.call(cmd, shell=True)

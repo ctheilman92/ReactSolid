@@ -80,8 +80,13 @@ contract Accounts {
     return TasksByHash;
   }
 
-  function getTask(bytes32 SHA256TaskHash) constant returns (string) {
-    return mTasks[SHA256TaskHash].description;
+  function getTask(bytes32 SHA256TaskHash) constant returns (string, uint, bool) {
+    return (
+      mTasks[SHA256TaskHash].description,
+      mTasks[SHA256TaskHash].timeStamp,
+      mTasks[SHA256TaskHash].isComplete
+    );
+    //return mTasks[SHA256TaskHash].description;
   }
   //endregion
 }

@@ -24,7 +24,7 @@ const FormFrame = (props) => {
   else {
     return (
       <div className="flexContainer">
-        <h3>YOU'RE REGISTERED LETS GET STARTED</h3>
+        <h4>YOU'RE REGISTERED LETS GET STARTED</h4>
       </div>
     );
   }

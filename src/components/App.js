@@ -3,9 +3,9 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import ModalUserNav from './ModalUserNav'
 import Dashboard from './Dashboard'
-import { Nav, Navbar, NavItem } from 'react-bootstrap'
 import * as accountActions from '../actions' // eslint-disable-line
 
+import '../css/App.css'
 import '../css/styles.css'
 import '../css/oswald.css'
 import '../css/open-sans.css'
@@ -67,15 +67,13 @@ class App extends Component {
 
         <div className="container">
           <div>
+            {
+              this.props.accounts.isRegisteredUser
+              ? <h2>Welcome {this.props.accounts.SenderHandle}!</h2>
+              : <h3>Lets Get Started!!</h3>
+            }
             <div>
-              {
-                this.props.accounts.isRegisteredUser
-                ? <h2>Welcome {this.props.accounts.SenderHandle}!</h2>
-                : <h3>Wanna start getting shit done? Lets go!</h3>
-              }
-
               <Dashboard />
-
             </div>
           </div>
         </div>

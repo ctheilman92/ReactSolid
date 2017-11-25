@@ -17,6 +17,7 @@ code {
 }
 
 .container {
+  background-color: '#a7a8aa';
   box-sizing: border-box;
   width: 100%;
   padding: 45px 20px;

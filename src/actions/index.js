@@ -1,4 +1,5 @@
 import AccountsContract from '../../build/contracts/Accounts.json'
+import AccountsPayableContract from '../../build/contracts/AccountsPayable.json'
 import getWeb3 from '../utils/getWeb3'
 import initialState from '../utils/store'
 
@@ -37,31 +38,27 @@ export const loadWeb3 = () => {
                                     newState.SenderHandle = detes[0];
                                     newState.isRegisteredUser = true;
                                     let tasks = detes[1];
-
                                     
                                     if (tasks !== '') {
                                         return newState.AccountsCtrct.deployed().then(inst3 => {
                                             return inst3.getUserTasks(newState.SenderAddress); }).then(taskHashes => {
-                                                let taskList = []
+                                                let tasksProcessed = 0
                                                 taskHashes.map(t => { 
                                                     newState.AccountsCtrct.deployed().then(inst4 => {
                                                         return inst4.getTask(t); }).then(restask => { 
                                                             newState.SenderTaskList.push(restask)
-                                                            return console.log('task details added' + newState.SenderTaskList)
-                                                        })
-                                                })
+                                                            tasksProcessed++
 
-                                                return dispatch({
-                                                    type: 'LOAD_WEB3_SUCCESS',
-                                                    payload: newState
+                                                            if (tasksProcessed === taskHashes.length) {
+                                                                return dispatch({
+                                                                    type: 'LOAD_WEB3_SUCCESS',
+                                                                    payload: newState
+                                                                });
+                                                            }
+                                                        })
                                                 })
                                             })
                                     }
-
-                                    return dispatch({   
-                                        type: 'LOAD_WEB3_SUCCESS',
-                                        payload: newState
-                                    })
                                 })
                         }
                         else {

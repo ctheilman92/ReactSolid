@@ -1,0 +1,63 @@
+  .DashList{
+    width: 600px;
+    margin: 0 auto;
+    background: rgb(255,255,255);
+    border: 1px solid rgb(220,220,220);
+    border-radius: 5px;
+    list-style: none;
+    padding: 0px;
+    line-height: 50px;
+    cursor: default;
+  }
+
+  .DashList li {
+    height: 50px;
+    border-bottom: 1px solid rgb(220,220,220);
+    text-indent: 20px;
+  }
+
+  .DashList li:first-child{
+      background-color: #2C3E50;
+      text-indent: 10px;
+  }
+
+  .DashTitle {
+      color: white;
+      padding-top: 0.7em;
+  }
+
+  .DashList li:last-child{
+    border: none;
+  }
+
+  .status {
+    display: inline-block;
+    float: right;
+    height: 1em;
+    line-height: 1em;
+    margin: 17px 15px;
+    text-indent: 0;
+  
+    font-family:  'Monaco','Consolas', 'Courier', monospace;
+    font-weight: bold;
+    font-size: 0.750em;
+    text-transform: uppercase;
+    border: 1px solid;
+    border-radius: 3px;
+    padding: 1px 2px;
+  }
+
+  .green {
+    color: #2ecc71;
+    border-color: #2ecc71;
+  }
+
+  .yellow {
+    color: #f1c40f;
+    border-color: #f1c40f;
+  }
+
+  .red{
+    color: #e74c3c;
+    border-color: #e74c3c;
+  }

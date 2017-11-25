@@ -29,24 +29,6 @@ export default (state = initialState, action) => {
             newState.isFetching = false
             newState.isRegisteredUser = true
             return newState
-        case 'ADD_TASK':
-            console.log('task added')
-            return state
-        case 'GET_USER':
-            console.log('user got')
-            return state
-        case 'GET_USER_DETAIL':
-            console.log('user details got')
-            return state
-        case 'GET_ALL_TASKS':
-            console.log('tasks white pages got')
-            return state
-        case 'GET_USER_TASKS':
-            console.log('user specific tasks got')
-            return state
-        case 'GET_TASK':
-            console.log('specific task got')
-            return state
         default:
             return state
 

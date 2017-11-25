@@ -1,35 +1,51 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux' 
 import { bindActionCreators } from 'redux' 
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table'
-import { Panel } from 'react-bootstrap'
 
-// import '../css/bootstrap.min.css'
-import '../../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
+import '../css/pure-min.css'
+import '../css/Dashboard.css'
+
 
 class Dashboard extends Component {
 
-  products = [{
-    id: 1,
-    name: "Product1",
-    price: 120
-  }, {
-    id: 2,
-    name: "Product2",
-    price: 80
-  }];
+    tasks = this.props.accounts.SenderTaskList
+
+    setStatusClass = (status) => {
+      switch (status) {
+        case true:
+          return "status green"
+        case false:
+          return "status red"
+        default:
+          return "status yellow"
+      }
+    }
 
     render() {
+      if (this.tasks.length === 2) {
       return (
-
-        <div>
-          <BootstrapTable data={this.products} insertRow={true}>
-            <TableHeaderColumn dataField='id' isKey>Product ID</TableHeaderColumn>
-            <TableHeaderColumn dataField='name'>Name</TableHeaderColumn>
-            <TableHeaderColumn dataField='price'>Price</TableHeaderColumn>
-          </BootstrapTable>
-        </div>
-      )
+          <div>
+            <ul className="DashList">
+              <li><h4 className="DashTitle">Your TaskList</h4></li>
+              {this.tasks.map(row => { 
+                return <li><span className={ this.setStatusClass(row[2]) }>{ (row[2] === false) ? "INCOMPLETE" : "COMPLETE" }</span>{row[0]}</li>
+              })}
+            </ul>
+          </div>
+        )
+      }
+      else {
+        return (
+          <ul className="DashList">
+            <span className="status yellow">Stale Task</span>
+            <li>Task 1</li>
+            <span className="status green">Completed</span>
+            <li>Task 2</li>
+            <span className="status red">Incomplete</span>
+            <li>Task 3</li>
+          </ul>
+        )
+      }
     }
   }
 

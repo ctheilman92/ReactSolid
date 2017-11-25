@@ -6,7 +6,7 @@ pragma solidity ^0.4.4;
 contract AccountsPayable {
 
     //the contract needs ether to send and receive this will be a mapping of ether for the contract to use
-
+    mapping(address => uint256) public balances;
 
     mapping(bytes32 => Payment) public mPayments;
     bytes32[] public PaymentsByHash;
@@ -14,10 +14,18 @@ contract AccountsPayable {
     mapping(address => User) public mUsers;
     address[] public UsersByAddress;
 
+    event LogPaymentProcessed (
+        address _payer,
+        address _receiver,
+        uint _balance
+    );
+
+    //event PayToReceiver
 
     struct Payment {
         uint timeStamp;
         uint amount;
+        address billTo;
         address payTo;
         string memo;
         bool isPaid;
@@ -46,27 +54,59 @@ contract AccountsPayable {
             mUsers[newUserAddr].funds = getBalance;
             UsersByAddress.push(newUserAddr);
             return true;
-        } 
-        else {
+        } else {
             return false;
         }
     }
 
-    //generate random sha256 32byte string to pass in
-    //pass in biller, and payer addresses (must be registered)
-    function addPaymentToUser(address _billTo, address _payTo, string _memo, bytes32 SHA256PaymentHash) returns (bool success) {
 
-        //check mUsers for registered users for both biller and payer
+    function tryDeposit() payable returns (bool success) {
+        address userAddr = msg.sender;
+
+        require (userAddr.balance > msg.value);
+        balances[msg.sender] += msg.value;
+        return true;
+    }
+
+    /*
+        this one works -- we must pass in the payment amount as {value: paymentDetails[1]} instead of looking it up in here.
+    */
+    function payout(bytes32 paymentHash) payable returns (bool success) {
+        address userAddr = msg.sender;
+        address payTo = mPayments[paymentHash].payTo;
+
+        require (mPayments[paymentHash].isPaid == false);
+        require (mPayments[paymentHash].billTo == userAddr);
+        require (userAddr.balance > msg.value);
+        
+
+        payTo.transfer(msg.value);
+        mPayments[paymentHash].isPaid = true;
+
+        LogPaymentProcessed(msg.sender, payTo, msg.value);
+        return true;
+    }
+
+
+    // --generate random sha256 32byte string to pass in
+    // --pass in _amount using web3 ----> web3.toWei(99.99, 'ether')
+    function addPaymentToUser(address _billTo, address _payTo, uint _amount, string _memo, bytes32 SHA256PaymentHash) returns (bool success) {
+
+        //check mUsers for both biller and payer
         if (bytes(mUsers[_billTo].handle).length != 0 && bytes(mUsers[_payTo].handle).length != 0) {
-            if (bytes(_memo).length != 0 && bytes(mPayments[SHA256PaymentHash].memo).length == 0) {
+            if (bytes(_memo).length != 0) {
                 PaymentsByHash.push(SHA256PaymentHash);
 
                 mPayments[SHA256PaymentHash].memo = _memo;
                 mPayments[SHA256PaymentHash].timeStamp = block.timestamp;
                 mPayments[SHA256PaymentHash].isPaid = false;
+                mPayments[SHA256PaymentHash].billTo = _billTo;
                 mPayments[SHA256PaymentHash].payTo = _payTo;
-
+                mPayments[SHA256PaymentHash].amount = _amount;
+                
+                // -- both user and vendor will be connected ot the same payment address
                 mUsers[_billTo].paymentsList.push(SHA256PaymentHash);
+                mUsers[_payTo].paymentsList.push(SHA256PaymentHash);
             } else {
                 return false; //either memo passed in was empty or there was already a memo saved for this account
             }
@@ -74,13 +114,6 @@ contract AccountsPayable {
             return false; //either sender or receiver was not a registered user
         }
     }
-
-    //try using the following call
-    //eth.sendTransaction({from:sender, to:receiver, value: amount})
-    //so just use web3 object and run this afterward to return the new user balance
-    // function payBill(address receiverAddr) returns (bool success) {
-    //     return true
-    // }
 
     //gets
     function getUsers() constant returns (address[]) {
@@ -100,10 +133,11 @@ contract AccountsPayable {
         );
     }
     
-    function getPaymentDetails(bytes32 SHA256PaymentHash) constant returns (uint, uint, address, string, bool) {
+    function getPaymentDetails(bytes32 SHA256PaymentHash) constant returns (uint, uint, address, address, string, bool) {
         return (
             mPayments[SHA256PaymentHash].timeStamp,
             mPayments[SHA256PaymentHash].amount,
+            mPayments[SHA256PaymentHash].billTo,
             mPayments[SHA256PaymentHash].payTo,
             mPayments[SHA256PaymentHash].memo,
             mPayments[SHA256PaymentHash].isPaid

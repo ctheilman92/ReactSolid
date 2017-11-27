@@ -1,4 +1,4 @@
-import initialState from '../utils/store'
+import initialState from '../utils/APStore'
 
 const contract = require('truffle-contract');   // eslint-disable-line
 const util = require('util');                   // eslint-disable-line
@@ -28,6 +28,10 @@ export default (state = initialState, action) => {
             newState = action.payload
             newState.isFetching = false
             newState.isRegisteredUser = true
+            return newState
+        case 'REGISTER_USER_ERROR':
+            console.log('there was an issue creating this user')
+            newState.isFetching = true
             return newState
         default:
             return state

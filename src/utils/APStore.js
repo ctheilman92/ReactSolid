@@ -1,10 +1,11 @@
 let initialState = {
     SenderAddress: null,
+    SenderType: null,
     SenderHandle: null,
     RegisteredAccounts: [],
-    SenderTaskList: [],           //not set
+    SenderPayments: [],           //not set
     isRegisteredUser: false,
-    AccountsCtrct: null,
+    AccountsContract: null,
     web3: null,
     provider: null,
     isFetching: false

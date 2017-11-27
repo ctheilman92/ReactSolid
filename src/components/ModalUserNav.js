@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { RadioGroup, Radio } from 'react-radio-group'
 import * as accountActions from '../actions' // eslint-disable-line
 import { connect } from 'react-redux'
 import Modal from 'react-awesome-modal'
@@ -14,9 +15,19 @@ const util = require('util')  // eslint-disable-line
 const FormFrame = (props) => {
   if (!props.didRegister) {
     return (
-      <form className="form-inline">
+      <form className="form">
         <div className="flexContainer">
-          <input className="form-control mr-sm-2" type="text" name="unpl" placeholder={props.unpl} onChange={(event) => {props.handleOnChangePL(event)}} value={props.unpl} />
+          <label style={{ 'fontSize': '20px', 'paddingTop': '.2em', 'marginRight': '.3em' }} htmlFor="unpl">UserName</label>
+          <input size="20" className="form-control mr-sm-2" type="text" id="unpl" name="unpl" placeholder=""
+                  onChange={(event) => {props.handleOnChangePL(event); }} value={props.unpl} />
+        </div>
+        <div className="flushContainer">
+          <label style={{ 'fontSize': '20px' }} htmlFor="radioGroup">What kind of account is this</label>
+          <br />
+          <RadioGroup style={{ 'paddingLeft': '1em' }} name="AccountType" selectedValue={props.selectedRadio}>
+            <Radio onChange={event => { props.handleOnChangeRadioSelect(event); }} value="personal" /><i> Personal</i>
+            <Radio onChange={event => { props.handleOnChangeRadioSelect(event); }} style={{ 'marginLeft': '2em' }} value="commercial" /><i> Commercial</i>
+          </RadioGroup>
         </div>
       </form>
     );
@@ -38,6 +49,8 @@ class ModalUserNav extends Component {
     //use local state for UI stuff ONLY
     this.state = {
       unpl: 'UserName',
+      isVendor: false,
+      selectedRadio: null,
       errorCode: 'ERROR: there was an issue with the input',
       errorVisible: false
     }
@@ -51,13 +64,23 @@ class ModalUserNav extends Component {
   }
 
   handleOnChangePL = (e) => {
-    this.setState({ [e.target.name]: e.target.value})
+    this.setState({ [e.target.name]: e.target.value })
+  }
+
+  handleOnChangeRadioSelect = (e) => {
+    let selectedVendor = (e.target.value === "personal") ? false : true;
+    this.setState(
+      { selectedRadio: e.target.value,
+        isVendor: selectedVendor
+      }
+    )
+
   }
 
   handleSubmit = () => {
-    if (this.state.unpl !== "") {
+    if (this.state.unpl !== "" && this.state.isVendor != null) {
       if (this.props.accounts.web3.isConnected()) {
-        this.props.registerUser(this.state.unpl);
+        this.props.registerUser(this.state.unpl, this.state.isVendor);
       }
     }
     else {
@@ -74,21 +97,23 @@ class ModalUserNav extends Component {
   render() {
     const {
       unpl,
+      selectedRadio,
       errorCode,
       errorVisible
     } = this.state;
+
 
     return (
       <section>
         <Modal aria={{labelledby: "heading", describedby: "full_description"}} visible={this.props.visible} effect="fadeInUp">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title">Register your account!</h5>
+                  <h5 className="modal-title">Register Now!</h5>
                   <a href="#" onClick={ () => { this.props.toggleModal() }}>&times;</a>
                 </div>
                 <div className="modal-body">
-                  <FormFrame handleOnChangePL={this.handleOnChangePL} handleSubmit={this.handleSubmit}
-                    unpl={unpl} didRegister={this.props.accounts.isRegisteredUser} />
+                  <FormFrame handleOnChangePL={this.handleOnChangePL} handleSubmit={this.handleSubmit} handleOnChangeRadioSelect={this.handleOnChangeRadioSelect}
+                    unpl={unpl} didRegister={this.props.accounts.isRegisteredUser} selectedRadio={selectedRadio} />
                   <div style={{margin: '1em'}}>
                   {
                     this.state.errorVisible
@@ -121,7 +146,7 @@ const mapStateToProps = (state, ownProps) => {
 //needs more work done.
 function mapDispatchToProps(dispatch) {
   return {
-    registerUser: handle => { dispatch(accountActions.registerNewUser(handle)); }
+    registerUser: (handle, isVendor) => { dispatch(accountActions.registerNewUser(handle, isVendor)); }
   }
 }
 

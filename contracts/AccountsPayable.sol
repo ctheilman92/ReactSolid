@@ -46,17 +46,15 @@ contract AccountsPayable {
     function addNewUser(string _handle, bool _isVendor) returns (bool success) {
         address newUserAddr = msg.sender;
         uint getBalance = newUserAddr.balance;
+        require (bytes(mUsers[newUserAddr].handle).length == 0);
+        require (bytes(_handle).length != 0);
 
         //if handle not in userAddresses & the handle is not null
-        if (bytes(mUsers[newUserAddr].handle).length == 0 && bytes(_handle).length != 0) {
-            mUsers[newUserAddr].handle = _handle;
-            mUsers[newUserAddr].isVendor = _isVendor;
-            mUsers[newUserAddr].funds = getBalance;
-            UsersByAddress.push(newUserAddr);
-            return true;
-        } else {
-            return false;
-        }
+        mUsers[newUserAddr].handle = _handle;
+        mUsers[newUserAddr].isVendor = _isVendor;
+        mUsers[newUserAddr].funds = getBalance;
+        UsersByAddress.push(newUserAddr);
+        return true;
     }
 
 

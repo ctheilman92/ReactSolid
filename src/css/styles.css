@@ -9,9 +9,16 @@ footer {
     margin-top: 3em;
 }
 
+
 .flexContainer {
     display: flex;
     justify-content: center;
+    padding: 1em;
+}
+
+.flushContainer {
+    justify-content: center;
+    padding: 1em;
 }
 
 .navi {

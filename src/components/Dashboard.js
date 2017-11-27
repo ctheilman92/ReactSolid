@@ -1,14 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux' 
 import { bindActionCreators } from 'redux' 
+import getEtherValue from '../utils/unitConverter';
 
 import '../css/pure-min.css'
 import '../css/Dashboard.css'
 
+const util = require('util');
+
 
 class Dashboard extends Component {
 
-    tasks = this.props.accounts.SenderTaskList
+    payments = this.props.accounts.SenderPayments;
+    eval = getEtherValue(this.payments[0][1]);
 
     setStatusClass = (status) => {
       switch (status) {
@@ -22,12 +26,12 @@ class Dashboard extends Component {
     }
 
     render() {
-      if (this.tasks.length === 2) {
+      if (this.payments.length === 2) {
       return (
           <div>
             <ul className="DashList">
               <li><h4 className="DashTitle">Your TaskList</h4></li>
-              {this.tasks.map(row => { 
+              {this.payments.map(row => { 
                 return <li><span className={ this.setStatusClass(row[2]) }>{ (row[2] === false) ? "INCOMPLETE" : "COMPLETE" }</span>{row[0]}</li>
               })}
             </ul>
@@ -35,10 +39,12 @@ class Dashboard extends Component {
         )
       }
       else {
+        console.log(this.payments[0])
+        console.log(this.eval)
         return (
           <ul className="DashList">
             <span className="status yellow">Stale Task</span>
-            <li>Task 1</li>
+            <li>{this.eval}</li>
             <span className="status green">Completed</span>
             <li>Task 2</li>
             <span className="status red">Incomplete</span>

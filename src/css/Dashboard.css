@@ -33,9 +33,9 @@
   .status {
     display: inline-block;
     float: right;
-    height: 1em;
+    height: 1.3em;
     line-height: 1em;
-    margin: 17px 15px;
+    margin: 5px 4px;
     text-indent: 0;
   
     font-family:  'Monaco','Consolas', 'Courier', monospace;

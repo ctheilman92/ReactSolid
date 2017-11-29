@@ -98,8 +98,6 @@ class ModalUserNav extends Component {
     const {
       unpl,
       selectedRadio,
-      errorCode,
-      errorVisible
     } = this.state;
 
 

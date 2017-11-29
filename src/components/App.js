@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import ModalUserNav from './ModalUserNav'
 import Dashboard from './Dashboard'
+import { connect } from 'react-redux'
+import React, { Component } from 'react'
+import ModalUserNav from './ModalUserNav'
 import * as accountActions from '../actions' // eslint-disable-line
+import getEtherValue from '../utils/unitConverter';
 
 import '../css/App.css'
 import '../css/styles.css'
@@ -46,7 +46,6 @@ class App extends Component {
     else {
       return (
         <div>
-
           <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
           <a className="navbar-brand" href="#">PayBlocks! </a>
         
@@ -57,7 +56,9 @@ class App extends Component {
                   ? <li className="nav-item my-2 my-lg-0">
                       <a onClick={ () => { this.toggleModal() }} className="nav-link" href="#">Register</a>
                     </li>
-                  : null
+                  : <li className="nav-item my-2 my-lg-0">
+                      <a className="nav-link" href="#">Wallet Funds: {getEtherValue(this.props.accounts.SenderBalance)} ETH</a>
+                    </li>
               }
             </ul>
           </div>
@@ -67,18 +68,12 @@ class App extends Component {
 
         <div className="container">
           <div>
-            {
-              this.props.accounts.isRegisteredUser
-              ? <h2>Welcome {this.props.accounts.SenderHandle}!</h2>
-              : <h3>Lets Get Started!!</h3>
-            }
-            <div>
-              <Dashboard />
-            </div>
+            <Dashboard />
           </div>
         </div>
         
         <footer>
+          <hr />
           Created by Cameron Heilman - Adrian Rodriguez
           <br/>
           <a href="https://github.com/ctheilman92/ReactSolid/">React Solid Repo</a>

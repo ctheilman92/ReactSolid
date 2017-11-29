@@ -1,9 +1,10 @@
 let initialState = {
     SenderAddress: null,
+    SenderBalance: null,
     SenderType: null,
     SenderHandle: null,
     RegisteredAccounts: [],
-    SenderPayments: [],           //not set
+    SenderPayments: [],
     isRegisteredUser: false,
     AccountsContract: null,
     web3: null,

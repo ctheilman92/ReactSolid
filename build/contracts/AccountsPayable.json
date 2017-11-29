@@ -1346,8 +1346,66 @@
       "links": {},
       "address": "0xf3a3c9b84bf6d2751458b751b19307e15744dc44",
       "updated_at": 1511744230452
+    },
+    "1511792293054": {
+      "events": {
+        "0x6b31a3142ad0405962fae0dacfb18f065b67592b0f1226ec837177d0778f5d26": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_payer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_receiver",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogPaymentProcessed",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf3a3c9b84bf6d2751458b751b19307e15744dc44",
+      "updated_at": 1511792306892
+    },
+    "1511882064343": {
+      "events": {
+        "0x6b31a3142ad0405962fae0dacfb18f065b67592b0f1226ec837177d0778f5d26": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_payer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_receiver",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogPaymentProcessed",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf3a3c9b84bf6d2751458b751b19307e15744dc44",
+      "updated_at": 1511882081897
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1511744230452
+  "updated_at": 1511882081897
 }

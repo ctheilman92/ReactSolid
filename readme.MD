@@ -1,6 +1,6 @@
 # React Solid
 
-**Authors: Cameron Heilman, Adrian Rodriguez**
+**Authors**: Cameron Heilman, Adrian Rodriguez
 
 **Application Summary**:  An interface for Users and Commercial vendors to keep track and manage current bills and payments.
   

@@ -1,24 +1,22 @@
 # React Solid
 
 Authors: Cameron Heilman, Adrian Rodriguez
-=============
 
 Objective
 -------------
-To explore ethereum block chain development of DApps.
-
-Application Summary
-    Create an interface for Users and Commercial vendors to keep track and manage current bills and payments.
+*Application Summary*
+Create an interface for Users and Commercial vendors to keep track and manage current bills and payments.
   
  
 Requirements
 -------------
- _this project extends Web3.js. a Node.js library used to connect to the Ethereum Blockchain._
- -ConsenSys TestRPC
- -SolidityJS
- -Truffle Compiler
- -Web3.js
- -MetaMask Chrome Browser plugin
+ 1. this project extends Web3.js. a Node.js library used to connect to the Ethereum Blockchain._
+ 2. ConsenSys TestRPC
+ 3. SolidityJS
+ 4. Truffle Compiler
+ 5. Web3.js
+ 6. NodeJS
+ 7. MetaMask Chrome Browser plugin
   
 Getting Started
 ----------------

@@ -2,9 +2,8 @@
 
 Authors: Cameron Heilman, Adrian Rodriguez
 
-Objective
--------------
-*Application Summary*
+**Application Summary**
+
 Create an interface for Users and Commercial vendors to keep track and manage current bills and payments.
   
  

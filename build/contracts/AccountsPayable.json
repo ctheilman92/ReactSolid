@@ -1404,8 +1404,95 @@
       "links": {},
       "address": "0xf3a3c9b84bf6d2751458b751b19307e15744dc44",
       "updated_at": 1511882081897
+    },
+    "1511991424550": {
+      "events": {
+        "0x6b31a3142ad0405962fae0dacfb18f065b67592b0f1226ec837177d0778f5d26": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_payer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_receiver",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogPaymentProcessed",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf3a3c9b84bf6d2751458b751b19307e15744dc44",
+      "updated_at": 1511991544076
+    },
+    "1512010215491": {
+      "events": {
+        "0x6b31a3142ad0405962fae0dacfb18f065b67592b0f1226ec837177d0778f5d26": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_payer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_receiver",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogPaymentProcessed",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf3a3c9b84bf6d2751458b751b19307e15744dc44",
+      "updated_at": 1512010279500
+    },
+    "1512011204999": {
+      "events": {
+        "0x6b31a3142ad0405962fae0dacfb18f065b67592b0f1226ec837177d0778f5d26": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_payer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_receiver",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogPaymentProcessed",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf3a3c9b84bf6d2751458b751b19307e15744dc44",
+      "updated_at": 1512011264085
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1511882081897
+  "updated_at": 1512011264085
 }

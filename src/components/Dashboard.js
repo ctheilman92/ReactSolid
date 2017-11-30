@@ -56,7 +56,7 @@ class Dashboard extends Component {
           ? <Table bordered responsive>
             <thead>
               <th style={{ 'width': '7px' }}>Status</th>
-              { (this.props.SenderType !== 'VENDOR') ? <th style={{ 'width': '10px' }}>Vendor</th> : <th style={{ 'width': '10px' }}>Client</th> }
+              <th style={{ 'width': '10px' }}>{this.setUserHeaderType()}</th>
               <th>Memo</th>
               <th style={{ 'width': '12px' }}>Amount</th>
               { 
@@ -96,6 +96,15 @@ class Dashboard extends Component {
    }
 
    //#region UI methods
+   setUserHeaderType = () => {
+     if (this.props.accounts.SenderType === 'VENDOR') {
+        return 'Bill to';
+     }
+     else {
+       return 'Pay to';
+     }
+   }
+
    setPayableClass = (status) => {
     switch (status) {
       case true:

@@ -1,15 +1,15 @@
 # React Solid
 
-Authors: Cameron Heilman, Adrian Rodriguez
+**Authors: Cameron Heilman, Adrian Rodriguez**
 
 **Application Summary**
 
-Create an interface for Users and Commercial vendors to keep track and manage current bills and payments.
+  ...Create an interface for Users and Commercial vendors to keep track and manage current bills and payments.
   
  
 Requirements
 -------------
- 1. this project extends Web3.js. a Node.js library used to connect to the Ethereum Blockchain._
+ __this project extends Web3.js. a Node.js library used to connect to the Ethereum Blockchain.__
  2. ConsenSys TestRPC
  3. SolidityJS
  4. Truffle Compiler

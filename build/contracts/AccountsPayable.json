@@ -1491,8 +1491,37 @@
       "links": {},
       "address": "0xf3a3c9b84bf6d2751458b751b19307e15744dc44",
       "updated_at": 1512011264085
+    },
+    "1512016672250": {
+      "events": {
+        "0x6b31a3142ad0405962fae0dacfb18f065b67592b0f1226ec837177d0778f5d26": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_payer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_receiver",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "LogPaymentProcessed",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xd6acff9c4ab8ff6d75ad23d802dafde0ea29215b",
+      "updated_at": 1512016685517
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1512011264085
+  "updated_at": 1512016685517
 }

@@ -125,7 +125,7 @@ class Dashboard extends Component {
         default:
           return "status yellow"
       }
-    }
+   }
 
     setStatusLabel = (status) => {
       switch (status) {

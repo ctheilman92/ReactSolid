@@ -3,8 +3,9 @@
 **Authors: Cameron Heilman, Adrian Rodriguez**
 
 **Application Summary**
+1. Payblocks
 
-  ...Create an interface for Users and Commercial vendors to keep track and manage current bills and payments.
+...Create an interface for Users and Commercial vendors to keep track and manage current bills and payments.
   
  
 Requirements

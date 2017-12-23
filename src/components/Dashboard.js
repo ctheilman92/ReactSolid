@@ -43,80 +43,80 @@ class Dashboard extends Component {
     }
    
    //for shorthand use
-   payments = (this.props.accounts.SenderPayments).sort((a, b) => { return a.isPaid - b.isPaid });
+    payments = (this.props.accounts.SenderPayments).sort((a, b) => { return a.isPaid - b.isPaid });
 
    //#region RENDER methods
-   renderPaymentsTable = () => {
-     return (
-      <div>
-        <h4>Your Payments</h4>
-        <div className="flexContainer">
-        {
-          (this.payments.length > 0) 
-          ? <Table bordered responsive>
-            <thead>
-              <th style={{ 'width': '7px' }}>Status</th>
-              <th style={{ 'width': '10px' }}>{this.setUserHeaderType()}</th>
-              <th>Memo</th>
-              <th style={{ 'width': '12px' }}>Amount</th>
-              { 
-                (this.props.accounts.SenderType !== 'VENDOR') 
-                ? <th style={{ 'width': '8px' }}>PAY</th> 
-                : null 
-              }
-            </thead>
-            <tbody>
+    renderPaymentsTable = () => {
+      return (
+        <div>
+          <h4>Your Payments</h4>
+          <div className="flexContainer">
+          {
+            (this.payments.length > 0) 
+            ? <Table bordered responsive>
+              <thead>
+                <th style={{ 'width': '7px' }}>Status</th>
+                <th style={{ 'width': '10px' }}>{this.setUserHeaderType()}</th>
+                <th>Memo</th>
+                <th style={{ 'width': '12px' }}>Amount</th>
+                { 
+                  (this.props.accounts.SenderType !== 'VENDOR') 
+                  ? <th style={{ 'width': '8px' }}>PAY</th> 
+                  : null 
+                }
+              </thead>
+              <tbody>
 
-              {this.payments.map((pmnt,key) => {
-                return (
-                  <tr> 
-                    <td><li className="list-unstyled"><span className={this.setStatusClass(pmnt.isPaid)}>{this.setStatusLabel(pmnt.isPaid)}</span></li></td>
-                    <td>{pmnt.partyAddress}</td>
-                    <td>{pmnt.memo}</td>
-                    <td>{getEtherValue(pmnt.amount)}</td>
-                    { 
-                      (this.props.accounts.SenderType !== 'VENDOR') 
-                      ? <td><i style={{ 'padding': '4px' }} className={this.setPayableClass(pmnt.isPaid)} aria-hidden="true" onClick={ () => { if (!pmnt.isPaid) { this.selectStatePayment(pmnt); this.toggleConfirmPayoutModal(); }}}></i></td>
-                      : null 
-                    }
-                  </tr>
-                );
-              })}
+                {this.payments.map((pmnt,key) => {
+                  return (
+                    <tr> 
+                      <td><li className="list-unstyled"><span className={this.setStatusClass(pmnt.isPaid)}>{this.setStatusLabel(pmnt.isPaid)}</span></li></td>
+                      <td>{pmnt.partyAddress}</td>
+                      <td>{pmnt.memo}</td>
+                      <td>{getEtherValue(pmnt.amount)}</td>
+                      { 
+                        (this.props.accounts.SenderType !== 'VENDOR') 
+                        ? <td><i style={{ 'padding': '4px' }} className={this.setPayableClass(pmnt.isPaid)} aria-hidden="true" onClick={ () => { if (!pmnt.isPaid) { this.selectStatePayment(pmnt); this.toggleConfirmPayoutModal(); }}}></i></td>
+                        : null 
+                      }
+                    </tr>
+                  );
+                })}
 
-            </tbody>
-          </Table>
-          : <h4>Well this is awkward...you don't have any bills to pay!?</h4>
-        }
+              </tbody>
+            </Table>
+            : <h4>Well this is awkward...you don't have any bills to pay!?</h4>
+          }
+          </div>
+          <div className="flexContainer">
+            <button type="button" className="btn btn-lg btn-primary" onClick={ () => { this.toggleAddPaymentModal(); }}>Add a New Payment</button>
+          </div>
         </div>
-        <div className="flexContainer">
-          <button type="button" className="btn btn-lg btn-primary" onClick={ () => { this.toggleAddPaymentModal(); }}>Add a New Payment</button>
-        </div>
-      </div>
-     );
-   }
+      );
+    }
 
    //#region UI methods
-   setUserHeaderType = () => {
-     if (this.props.accounts.SenderType === 'VENDOR') {
-        return 'Bill to';
-     }
-     else {
-       return 'Pay to';
-     }
-   }
-
-   setPayableClass = (status) => {
-    switch (status) {
-      case true:
-        return "fa fa-lg fa-times-rectangle"
-      case false:
-        return "fa fa-lg fa-btc"
-      default:
-        return "fa fa-lg fa-times-rectangle"
+    setUserHeaderType = () => {
+      if (this.props.accounts.SenderType === 'VENDOR') {
+          return 'Bill to';
+      }
+      else {
+        return 'Pay to';
+      }
     }
-   }
 
-   setStatusClass = (status) => {
+    setPayableClass = (status) => {
+      switch (status) {
+        case true:
+          return "fa fa-lg fa-times-rectangle"
+        case false:
+          return "fa fa-lg fa-btc"
+        default:
+          return "fa fa-lg fa-times-rectangle"
+      }
+    }
+
+    setStatusClass = (status) => {
       switch (status) {
         case true:
           return "status green"
@@ -125,7 +125,7 @@ class Dashboard extends Component {
         default:
           return "status yellow"
       }
-   }
+    }
 
     setStatusLabel = (status) => {
       switch (status) {

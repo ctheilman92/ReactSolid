@@ -125,7 +125,7 @@ export const registerNewUser = (handle, isVendor) => {
                 currState.SenderType = (isVendor === true) ? 'VENDOR' : 'USER';
                 currState.web3.eth.getBalance(currState.SenderAddress, (error, result) => {
                     if (!error) {
-                        currState.SenderBalance = result;
+                        currState.SenderBalance = result;  
                         return dispatch({
                             type: 'REGISTER_USER_SUCCESS',
                             payload: currState

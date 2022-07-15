@@ -17,14 +17,7 @@ Requirements
   
 Getting Started
 ----------------
-1. Open One Terminal
-2. Clone repo and install npm modules
-```shell
-$ git clone https://github.com/ctheilman92/ReactSolid.git
-$ cd ReactSolid
-$ npm install
- ```
-2. Start the TestRPC server
+1. Start the TestRPC server
 ```shell
 //for random generated mnemonic testnet
 $ tesrpc 
@@ -60,9 +53,4 @@ var registeredUsers
 contract.then(instance => { return instance.getUsers(); }).then(u => { return registeredUsers = u; })
 ```
 
-Known Bugs
---------------
-1. Registered user Balance sometimes shows 0 ETH.
-2. Nothing stops one vendor from creating a payment for another vendor (it would never be paid).
-3. no test units written....whoops.
 
